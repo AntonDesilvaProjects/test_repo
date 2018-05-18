@@ -785,4 +785,57 @@ Ext.define('DeleteThis.view.DataGrid',{
 	}
 })
 
+--------------------------------------------------------------------------------------------------------------------------
+
+File Upload with Form Data
+
+{
+                xtype: 'form',
+                items : [
+                    {
+                        xtype : 'textfield',
+                        name : 'someText'
+                    },
+                    {
+                        xtype : 'filefield',
+                        name : 'uploadItem'
+                    }
+                ],
+                buttons : [
+                    {
+                        text : 'Submit',
+                        handler : function( btn )
+                        {
+                            var form = btn.up('form').getForm();
+                            form.submit({
+                                url : 'http://localhost:3000/content/upload'
+                            });
+                        }
+                    }
+                ]
+            }
+	    
+@RequestMapping(value="/upload", method=RequestMethod.POST )
+	@CrossOrigin
+	public SimpleHttpResponse uploadFile(@RequestParam("uploadItem") MultipartFile fileUpload, @RequestParam("someText") String s)
+	{
+		System.out.println( s );
+		System.out.println(fileUpload.getOriginalFilename());
+		
+		try {
+			byte[] fileBytes = fileUpload.getBytes();
+			Files.write(Paths.get("C:\\Users\\Anton\\Desktop\\Uploads\\" + fileUpload.getOriginalFilename()), fileBytes);
+		} 
+		catch(EOFException eofException)
+		{
+			System.out.println("file upload was cancelled !");
+		}
+		catch (IOException e) {
+			e.printStackTrace();
+		}
+		
+		return new SimpleHttpResponse(true/*, fileUpload.getOriginalFilename() + " was successfuly uploaded !"*/);
+	}
+
+
 
