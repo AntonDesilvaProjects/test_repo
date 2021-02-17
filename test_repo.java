@@ -121,3 +121,155 @@ public class DirectoryWatcher {
 		});
 	}
 }
+
+
+package com.generic;
+
+import com.github.scribejava.core.builder.api.DefaultApi20;
+import com.github.scribejava.core.extractors.TokenExtractor;
+import com.github.scribejava.core.model.OAuth2AccessToken;
+import com.github.scribejava.core.model.Verb;
+import com.github.scribejava.core.oauth2.bearersignature.BearerSignature;
+import com.github.scribejava.core.oauth2.clientauthentication.ClientAuthentication;
+
+import java.util.Optional;
+
+/**
+ *  A generic OAuth 2.0 API for interfacing with Scribe. Usage as follows:
+ *  
+ *  final GenericOAuth2API handler = GenericOAuth2API.Builder
+ *                 .aGenericOAuth2API()
+ *                 .withRefreshTokenEndpoint("https://oauth2.googleapis.com/token")
+ *                 .build();
+ *  final OAuth20Service service = new ServiceBuilder("API_KEY")
+ *                 .apiSecret("API_SECRET")
+ *                 .build(handler);
+ *  OAuth2AccessToken token = service.refreshAccessToken("REFRESH_TOKEN");
+ *  System.out.println(token.getAccessToken());
+ * */
+public class GenericOAuth2API extends DefaultApi20 {
+
+    private String accessTokenEndpoint;
+    private String refreshTokenEndpoint;
+    private String revokeTokenEndpoint;
+    private String authorizationBaseUrl;
+    private TokenExtractor<OAuth2AccessToken> tokenExtractor;
+    private BearerSignature bearerSignature;
+    private Verb accessTokenVerb;
+    private ClientAuthentication clientAuthentication;
+
+    private GenericOAuth2API() {
+    }
+
+    @Override
+    public TokenExtractor<OAuth2AccessToken> getAccessTokenExtractor() {
+        return Optional.ofNullable(this.tokenExtractor).orElse(super.getAccessTokenExtractor());
+    }
+
+    @Override
+    public Verb getAccessTokenVerb() {
+        return Optional.ofNullable(this.accessTokenVerb).orElse(super.getAccessTokenVerb());
+    }
+
+    @Override
+    public String getRefreshTokenEndpoint() {
+        return Optional.ofNullable(this.refreshTokenEndpoint).orElse(super.getRefreshTokenEndpoint());
+    }
+
+    @Override
+    public String getRevokeTokenEndpoint() {
+        return Optional.ofNullable(this.revokeTokenEndpoint).orElse(super.getRevokeTokenEndpoint());
+    }
+
+    @Override
+    public BearerSignature getBearerSignature() {
+        return Optional.ofNullable(this.bearerSignature).orElse(super.getBearerSignature());
+    }
+
+    @Override
+    public ClientAuthentication getClientAuthentication() {
+        return Optional.ofNullable(this.clientAuthentication).orElse(super.getClientAuthentication());
+    }
+
+    @Override
+    public String getAccessTokenEndpoint() {
+        return this.accessTokenEndpoint;
+    }
+
+    @Override
+    protected String getAuthorizationBaseUrl() {
+        return this.authorizationBaseUrl;
+    }
+
+    public static final class Builder {
+        private String accessTokenEndpoint;
+        private String refreshTokenEndpoint;
+        private String revokeTokenEndpoint;
+        private String authorizationBaseUrl;
+        private TokenExtractor<OAuth2AccessToken> tokenExtractor;
+        private BearerSignature bearerSignature;
+        private Verb accessTokenVerb;
+        private ClientAuthentication clientAuthentication;
+
+        private Builder() {
+        }
+
+        public static Builder aGenericOAuth2API() {
+            return new Builder();
+        }
+
+        public Builder withAccessTokenEndpoint(String accessTokenEndpoint) {
+            this.accessTokenEndpoint = accessTokenEndpoint;
+            return this;
+        }
+
+        public Builder withRefreshTokenEndpoint(String refreshTokenEndpoint) {
+            this.refreshTokenEndpoint = refreshTokenEndpoint;
+            return this;
+        }
+
+        public Builder withRevokeTokenEndpoint(String revokeTokenEndpoint) {
+            this.revokeTokenEndpoint = revokeTokenEndpoint;
+            return this;
+        }
+
+        public Builder withAuthorizationBaseUrl(String authorizationBaseUrl) {
+            this.authorizationBaseUrl = authorizationBaseUrl;
+            return this;
+        }
+
+        public Builder withTokenExtractor(TokenExtractor<OAuth2AccessToken> tokenExtractor) {
+            this.tokenExtractor = tokenExtractor;
+            return this;
+        }
+
+        public Builder withBearerSignature(BearerSignature bearerSignature) {
+            this.bearerSignature = bearerSignature;
+            return this;
+        }
+
+        public Builder withAccessTokenVerb(Verb accessTokenVerb) {
+            this.accessTokenVerb = accessTokenVerb;
+            return this;
+        }
+
+        public Builder withClientAuthentication(ClientAuthentication clientAuthentication) {
+            this.clientAuthentication = clientAuthentication;
+            return this;
+        }
+
+        public GenericOAuth2API build() {
+            GenericOAuth2API genericOAuth2API = new GenericOAuth2API();
+            genericOAuth2API.tokenExtractor = this.tokenExtractor;
+            genericOAuth2API.bearerSignature = this.bearerSignature;
+            genericOAuth2API.clientAuthentication = this.clientAuthentication;
+            genericOAuth2API.revokeTokenEndpoint = this.revokeTokenEndpoint;
+            genericOAuth2API.accessTokenVerb = this.accessTokenVerb;
+            genericOAuth2API.accessTokenEndpoint = this.accessTokenEndpoint;
+            genericOAuth2API.refreshTokenEndpoint = this.refreshTokenEndpoint;
+            genericOAuth2API.authorizationBaseUrl = this.authorizationBaseUrl;
+            return genericOAuth2API;
+        }
+    }
+}
+
